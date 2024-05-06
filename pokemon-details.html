@@ -2,54 +2,163 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pokemon Details</title>
-  <!-- Include any necessary CSS files -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pokemon Details</title>
+  <!-- Include any necessary CSS files -->
+  <style>
+    .pokemon-details {
+  /* Style the container holding Pokemon details */
+  padding: 20px;
+  border-radius: 5px;
+  background-color: #f2f2f2;
+  margin: 20px auto;
+  width: 60%;
+}
+
+.pokemon-modal {
+  /* Style the modal window */
+  position: fixed; /* Make the modal overlay the page */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  display: none; /* Initially hide the modal */
+}
+
+.pokemon-modal-content {
+  /* Style the content displayed within the modal */
+  background-color: lightgray;
+  padding: 20px;
+  margin: 15% auto; /* Center the modal content */
+  border-radius: 5px;
+  width: 50%; /* Adjust modal content width as needed */
+}
+
+/* Additional styles for better visual appeal */
+
+.pokemon-modal-content img {
+  max-width: 100%;
+  height: auto;
+  margin-bottom: 10px;
+}
+
+.pokemon-modal-content h2 {
+  font-size: 20px;
+  margin-bottom: 5px;
+}
+
+.pokemon-modal-content p {
+  margin-bottom: 10px;
+}
+
+.pokemon-modal-content ul.stats {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.pokemon-modal-content ul.stats li {
+  margin-bottom: 5px;
+}
+
+  </style>
 </head>
 
 <body>
-  <div id="pokemon-details" class="pokemon-details">
-    <!-- This container will hold the details of the clicked Pokemon -->
-  </div>
+  <div id="pokemon-details" class="pokemon-details">
+    <!-- This container will hold the details of the clicked Pokemon -->
+  </div>
 
-  <script src="modal-stats-pokemon.js"></script>
-  <script>
-    // Function to extract the 'id' parameter from the URL
-    function getUrlParameter(name) {
-      name = name.replace(/[\[\]]/g, "\\$&");
-      var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-        results = regex.exec(window.location.href);
-      if (!results) return null;
-      if (!results[2]) return '';
-      return decodeURIComponent(results[2].replace(/\+/g, " "));
-    }
+  <div id="pokemon-modal" class="pokemon-modal">
+    <!-- This container will hold the modal content -->
+  </div>
 
-    // Function to fetch and display the details of the clicked Pokemon
-    function displayPokemonDetails() {
-      const pokemonId = getUrlParameter('id');
-      if (pokemonId) {
-        const url = `https://pokeapi.co/api/v2/pokemon/${pokemonId}`;
-        fetch(url)
-          .then(res => res.json())
-          .then(data => {
-            const modalContent = createModalContent(data);
-            const pokemonDetails = document.getElementById('pokemon-details');
-            pokemonDetails.innerHTML = modalContent;
-          })
-          .catch(error => {
-            console.error(error);
-            // Handle errors, such as displaying an error message
-          });
-      } else {
-        console.error("Pokemon ID not found in URL.");
-        // Handle case where Pokemon ID is not found in URL
-      }
-    }
+  <script>
+    // Function to extract the 'id' parameter from the URL
+    function getUrlParameter(name) {
+      name = name.replace(/[\[\]]/g, "\\$&");
+      var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(window.location.href);
+      if (!results) return null;
+      if (!results[2]) return '';
+      return decodeURIComponent(results[2].replace(/\+/g, " "));
+    }
 
-    // Call the function to display Pokemon details when the page loads
-    displayPokemonDetails();
-  </script>
+    // Function to fetch and display the details of the clicked Pokemon
+    function displayPokemonDetails() {
+      const pokemonId = getUrlParameter('id');
+      if (pokemonId) {
+        const url = `https://pokeapi.co/api/v2/pokemon/${pokemonId}`;
+        fetch(url)
+          .then(res => res.json())
+          .then(data => {
+            const modalContent = createModalContent(data);
+            const pokemonDetails = document.getElementById('pokemon-details');
+            pokemonDetails.innerHTML = modalContent;
+          })
+          .catch(error => {
+            console.error(error);
+            // Handle errors, such as displaying an error message
+          });
+      } else {
+        console.error("Pokemon ID not found in URL.");
+        // Handle case where Pokemon ID is not found in URL
+      }
+    }
+
+    // Call the function to display Pokemon details when the page loads
+    displayPokemonDetails();
+
+    function showPokemonModal(pokemonId) {
+      const url = `https://pokeapi.co/api/v2/pokemon/${pokemonId}`;
+
+      fetch(url)
+        .then(res => res.json())
+        .then(data => {
+          const modalContent = createModalContent(data);
+          const modalEl = document.getElementById('pokemon-modal');
+          modalEl.innerHTML = modalContent;
+
+          // Add event listener to close the modal
+          modalEl.addEventListener('click', (event) => {
+            if (event.target.classList.contains('pokemon-modal')) {
+              modalEl.innerHTML = '';
+            }
+          });
+
+          // For example, using CSS to toggle visibility:
+          modalEl.style.display = 'block';
+        })
+        .catch(error => {
+          console.error(error);
+          // Handle errors, such as displaying an error message in the modal
+        });
+    }
+
+    function createModalContent(pokemon) {
+      const name = pokemon.name[0].toUpperCase() + pokemon.name.slice(1);
+      const id = pokemon.id.toString().padStart(3, '0');
+      const types = pokemon.types.map(type => type.type.name).join(', ');
+      const img = pokemon.sprites.front_default;
+      const stats = pokemon.stats.map(stat => {
+        return `<li>${stat.stat.name.toUpperCase()}: ${stat.base_stat}</li>`;
+      }).join('');
+
+      return `
+        <div class="pokemon-modal-content">
+          <img src="${img}" alt="${name}">
+          <h2>${name} (#${id})</h2>
+          <p>Type: ${types}</p>
+          <ul class="stats">
+            ${stats}
+          </ul>
+        </div>
+      `;
+    }
+
+  </script>
 </body>
 
 </html>
