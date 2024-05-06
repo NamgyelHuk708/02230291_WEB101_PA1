@@ -15,7 +15,7 @@ function  showPokemonModal(pokemonId) {
           }
         });
   
-        // Display the modal (you can use your preferred method here)
+
         // For example, using CSS to toggle visibility:
         modalEl.style.display = 'block';
       })

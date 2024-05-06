@@ -121,9 +121,6 @@ const fetchPokemon = async (searchTerm) => {
 };
 
 fetchPokemons();
-
-// Add event listener for click on Pokemon cards
-// Add event listener for click on Pokemon cards
 // Add event listener for click on Pokemon cards
 poke_container.addEventListener("click", (event) => {
   const clickedEl = event.target;
