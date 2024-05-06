@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pokemon Details</title>
+  <!-- Include any necessary CSS files -->
+</head>
+
+<body>
+  <div id="pokemon-details" class="pokemon-details">
+    <!-- This container will hold the details of the clicked Pokemon -->
+  </div>
+
+  <script src="modal-stats-pokemon.js"></script>
+  <script>
+    // Function to extract the 'id' parameter from the URL
+    function getUrlParameter(name) {
+      name = name.replace(/[\[\]]/g, "\\$&");
+      var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(window.location.href);
+      if (!results) return null;
+      if (!results[2]) return '';
+      return decodeURIComponent(results[2].replace(/\+/g, " "));
+    }
+
+    // Function to fetch and display the details of the clicked Pokemon
+    function displayPokemonDetails() {
+      const pokemonId = getUrlParameter('id');
+      if (pokemonId) {
+        const url = `https://pokeapi.co/api/v2/pokemon/${pokemonId}`;
+        fetch(url)
+          .then(res => res.json())
+          .then(data => {
+            const modalContent = createModalContent(data);
+            const pokemonDetails = document.getElementById('pokemon-details');
+            pokemonDetails.innerHTML = modalContent;
+          })
+          .catch(error => {
+            console.error(error);
+            // Handle errors, such as displaying an error message
+          });
+      } else {
+        console.error("Pokemon ID not found in URL.");
+        // Handle case where Pokemon ID is not found in URL
+      }
+    }
+
+    // Call the function to display Pokemon details when the page loads
+    displayPokemonDetails();
+  </script>
+</body>
+
+</html>

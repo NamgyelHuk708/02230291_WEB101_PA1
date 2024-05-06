@@ -129,7 +129,7 @@ poke_container.addEventListener("click", (event) => {
   const clickedEl = event.target;
   if (clickedEl.classList.contains("pokemon")) {
     const pokemonId = clickedEl.id.split("-")[1];
-    showPokemonModal(pokemonId); // Call the function from modal-stats-pokemon.js
+    window.location.href = `pokemon-details.html?id=${pokemonId}`; // Redirect to new page with Pokemon details
   }
 });
 
