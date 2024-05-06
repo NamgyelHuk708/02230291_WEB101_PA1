@@ -56,15 +56,14 @@ const getPokemon = async (id) => {
   const url = `https://pokeapi.co/api/v2/pokemon/${id}`;
   const res = await fetch(url);
   const data = await res.json();
-  // console.log(data);
+ 
   createPokemonCard(data);
 };
 
 const createPokemonCard = (pokemon) => {
   const pokemonEl = document.createElement("div");
   pokemonEl.classList.add("pokemon");
-  pokemonEl.id = `pokemon-${pokemon.id}`; // Add ID for easier targeting
-
+  pokemonEl.id = `pokemon-${pokemon.id}`; 
   const name = pokemon.name[0].toUpperCase() + pokemon.name.slice(1);
   const id = pokemon.id.toString().padStart(3, "0");
 
@@ -116,7 +115,7 @@ const fetchPokemon = async (searchTerm) => {
     createPokemonCard(data);
   } catch (error) {
     console.error(error.message);
-    // Handle search errors (e.g., display an error message)
+    // Handle search errors 
   }
 };
 
